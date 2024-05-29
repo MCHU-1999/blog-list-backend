@@ -1,3 +1,5 @@
+const _ = require('lodash')
+
 /**
  * 
  * @param {Array} blogs 
@@ -48,8 +50,27 @@ const favoriteBlog = (blogs) => {
   return blogs.reduce(reducer, initial)
 }
 
+/**
+ * return the blog auther with the most blog posts from a list of blogs
+ * @param {Array} blogs 
+ * @returns {{ author: String, blogs: Number }}
+ */
+const mostProlificAuthor = (blogs) => {
+  if (blogs.length === 0) {
+    return { author: null, blogs: null }
+  }
+  // Count the number of blog posts for each author
+  const authorCounts = _.countBy(blogs, 'author');
+
+  // Find the author with the most blog posts
+  const author = _.maxBy(Object.keys(authorCounts), (author) => authorCounts[author]);
+
+  return { author: author, blogs: authorCounts[author] }
+}
+
 module.exports = {
   dummy, 
   totalLikes,
-  favoriteBlog
+  favoriteBlog,
+  mostProlificAuthor
 }

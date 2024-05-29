@@ -106,3 +106,27 @@ describe('blog with the most likes', () => {
     })
   })
 })
+
+describe('author with the most blog posts', () => {
+
+  test('when list is empty, return nulls', () => {
+    const result = listHelper.mostProlificAuthor([])
+    assert.deepStrictEqual(result, { author: null, blogs: null })
+  })
+
+  test('when list has only one blog, equals 1', () => {
+    const result = listHelper.mostProlificAuthor(listWithOneBlog)
+    assert.deepStrictEqual(result, {
+      author: 'Edsger W. Dijkstra',
+      blogs: 1,
+    })
+  })
+
+  test('when list has many blogs', () => {
+    const result = listHelper.mostProlificAuthor(listWithManyBlogs)
+    assert.deepStrictEqual(result, {
+      author: "Robert C. Martin",
+      blogs: 3,
+    })
+  })
+})
