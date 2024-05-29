@@ -68,9 +68,32 @@ const mostProlificAuthor = (blogs) => {
   return { author: author, blogs: authorCounts[author] }
 }
 
+/**
+ * return the blog auther with the most blog posts from a list of blogs
+ * @param {Array} blogs 
+ * @returns {{ author: String, likes: Number }}
+ */
+const mostLikes = (blogs) => {
+  if (blogs.length === 0) {
+    return { author: null, likes: null }
+  }
+  
+  // Group the blog posts by author
+  const blogsByAuthor = _.groupBy(blogs, 'author')
+  
+  // Compute the total likes for each author
+  const likesByAuthor = _.mapValues(blogsByAuthor, (blogs) => _.sumBy(blogs, 'likes'))
+
+  // Find the author with the most likes
+  const author = _.maxBy(Object.keys(likesByAuthor), (author) => likesByAuthor[author]);
+
+  return { author: author, likes: likesByAuthor[author] }
+}
+
 module.exports = {
   dummy, 
   totalLikes,
   favoriteBlog,
-  mostProlificAuthor
+  mostProlificAuthor,
+  mostLikes
 }
