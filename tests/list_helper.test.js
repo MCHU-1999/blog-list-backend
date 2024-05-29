@@ -2,7 +2,18 @@ const { test, describe } = require('node:test')
 const assert = require('node:assert')
 const listHelper = require('../utils/list_helper')
 
-const blogs = [
+const listWithOneBlog = [
+  {
+    _id: '5a422aa71b54a676234d17f8',
+    title: 'Go To Statement Considered Harmful',
+    author: 'Edsger W. Dijkstra',
+    url: 'https://homepages.cwi.nl/~storm/teaching/reader/Dijkstra68.pdf',
+    likes: 5,
+    __v: 0
+  }
+]
+
+const listWithManyBlogs = [
   {
     _id: "5a422a851b54a676234d17f7",
     title: "React patterns",
@@ -54,16 +65,6 @@ const blogs = [
 ]
 
 describe('total likes', () => {
-  const listWithOneBlog = [
-    {
-      _id: '5a422aa71b54a676234d17f8',
-      title: 'Go To Statement Considered Harmful',
-      author: 'Edsger W. Dijkstra',
-      url: 'https://homepages.cwi.nl/~storm/teaching/reader/Dijkstra68.pdf',
-      likes: 5,
-      __v: 0
-    }
-  ]
 
   test('when list has only one blog, equals the likes of that', () => {
     const result = listHelper.totalLikes(listWithOneBlog)
@@ -71,7 +72,37 @@ describe('total likes', () => {
   })
 
   test('when list has many blogs', () => {
-    const result = listHelper.totalLikes(blogs)
+    const result = listHelper.totalLikes(listWithManyBlogs)
     assert.strictEqual(result, 36)
+  })
+})
+
+describe('blog with the most likes', () => {
+
+  test('when list is empty, return nulls', () => {
+    const result = listHelper.favoriteBlog([])
+    assert.deepStrictEqual(result, {
+      title: null,
+      author: null,
+      likes: null,
+    })
+  })
+
+  test('when list has only one blog, equals the likes of that', () => {
+    const result = listHelper.favoriteBlog(listWithOneBlog)
+    assert.deepStrictEqual(result, {
+      title: 'Go To Statement Considered Harmful',
+      author: 'Edsger W. Dijkstra',
+      likes: 5,
+    })
+  })
+
+  test('when list has many blogs', () => {
+    const result = listHelper.favoriteBlog(listWithManyBlogs)
+    assert.deepStrictEqual(result, {
+      title: "Canonical string reduction",
+      author: "Edsger W. Dijkstra",
+      likes: 12,
+    })
   })
 })
