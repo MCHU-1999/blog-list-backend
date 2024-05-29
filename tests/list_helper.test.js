@@ -64,7 +64,7 @@ const listWithManyBlogs = [
   }  
 ]
 
-describe('total likes', () => {
+describe('totalLikes() test', () => {
 
   test('when list has only one blog, equals the likes of that', () => {
     const result = listHelper.totalLikes(listWithOneBlog)
@@ -77,7 +77,7 @@ describe('total likes', () => {
   })
 })
 
-describe('blog with the most likes', () => {
+describe('favoriteBlog() test', () => {
 
   test('when list is empty, return nulls', () => {
     const result = listHelper.favoriteBlog([])
@@ -107,7 +107,7 @@ describe('blog with the most likes', () => {
   })
 })
 
-describe('author with the most blog posts', () => {
+describe('mostProlificAuthor() test', () => {
 
   test('when list is empty, return nulls', () => {
     const result = listHelper.mostProlificAuthor([])
@@ -131,7 +131,7 @@ describe('author with the most blog posts', () => {
   })
 })
 
-describe('author with the most likes in total', () => {
+describe('mostLikes() test', () => {
 
   test('when list is empty, return nulls', () => {
     const result = listHelper.mostLikes([])
