@@ -129,6 +129,21 @@ describe('blog tests', () => {
     assert.strictEqual(allBlogs.length, allBlogsAfter.length +1)
     assert(!allBlogsAfter.map(e => e.id).includes(firstBlog.id))
   })
+
+  test('update a blog with id', async () => {
+    const allBlogs = await blogsInDb()
+    let firstBlog = allBlogs[0]
+    firstBlog.likes = 1000
+    await api
+      .put(`/api/blogs/${firstBlog.id}`)
+      .send(firstBlog)
+      .expect(200)
+
+    const allBlogsAfter = await blogsInDb()
+
+    assert.strictEqual(allBlogs.length, allBlogsAfter.length)
+    assert.strictEqual(allBlogsAfter[0].likes, 1000)
+  })
 })
 
 
