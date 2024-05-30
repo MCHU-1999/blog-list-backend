@@ -1,3 +1,5 @@
+const Blog = require('../models/blog')
+
 const listWithOneBlog = [
   {
     title: 'Go To Statement Considered Harmful',
@@ -46,9 +48,19 @@ const listWithManyBlogs = [
   }  
 ]
 
+// const nonExistingId = async () => {
+//   const blog = new Blog({ content: 'willremovethissoon' })
+//   await blog.save()
+//   await blog.deleteOne()
+
+//   return blog._id.toString()
+// }
+
+const blogsInDb = async () => {
+  const blogs = await Blog.find({})
+  return blogs.map(blog => blog.toJSON())
+}
 
 
 
-
-
-module.exports = { listWithOneBlog, listWithManyBlogs }
+module.exports = { listWithOneBlog, listWithManyBlogs, blogsInDb }

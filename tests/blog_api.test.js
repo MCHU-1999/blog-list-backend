@@ -7,7 +7,7 @@ const Blog = require('../models/blog')
 const app = require('../app')
 const api = supertest(app)
 
-const { listWithOneBlog, listWithManyBlogs } = require('./test_helper')
+const { listWithOneBlog, listWithManyBlogs, blogsInDb } = require('./test_helper')
 
 
 beforeEach(async () => {
@@ -38,9 +38,8 @@ describe('blog tests', () => {
     assert.strictEqual(response.body.length, listWithManyBlogs.length)
   })
 
-  test('index key is named "id"', async () => {
+  test('index key is named "id" not "_id"', async () => {
     const response = await api.get('/api/blogs')
-    const idCount = _.countBy(response.body, 'id')
 
     const reduced = response.body.reduce((acc, value) => {
       if (value.id) {
@@ -51,6 +50,27 @@ describe('blog tests', () => {
     }, 0)
     // console.log(reduced)
     assert.strictEqual(reduced, listWithManyBlogs.length)
+  })
+
+  test('a valid blog can be added', async () => {
+  
+    const blogToBeAdded = {
+      title: "newly added blog",
+      author: "MCHU",
+      url: "http://localhost:3003",
+      likes: 18,
+    }
+    await api
+      .post('/api/blogs')
+      .send(blogToBeAdded)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const blogs = await blogsInDb()
+    assert.strictEqual(blogs.length, listWithManyBlogs.length + 1)
+
+    const titles = blogs.map(n => n.title)
+    assert(titles.includes('newly added blog'))
   })
 })
 
