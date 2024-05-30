@@ -116,6 +116,19 @@ describe('blog tests', () => {
     const allBlogs = await blogsInDb()
     assert.strictEqual(allBlogs.length, listWithManyBlogs.length)
   })
+
+  test('delete a blog with id', async () => {
+    const allBlogs = await blogsInDb()
+    const firstBlog = allBlogs[0]
+    await api
+      .delete(`/api/blogs/${firstBlog.id}`)
+      .expect(204)
+
+    const allBlogsAfter = await blogsInDb()
+
+    assert.strictEqual(allBlogs.length, allBlogsAfter.length +1)
+    assert(!allBlogsAfter.map(e => e.id).includes(firstBlog.id))
+  })
 })
 
 
