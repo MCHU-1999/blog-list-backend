@@ -72,6 +72,25 @@ describe('blog tests', () => {
     const titles = blogs.map(n => n.title)
     assert(titles.includes('newly added blog'))
   })
+
+  test('if the "likes" property is missing, set it to 0', async () => {
+  
+    const blogToBeAdded = {
+      title: "newly added blog",
+      author: "MCHU",
+      url: "http://localhost:3003",
+      likes: undefined,
+    }
+    await api
+      .post('/api/blogs')
+      .send(blogToBeAdded)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const blog = await Blog.findOne({ title: "newly added blog" })
+    // console.log(blog.toJSON())
+    assert.strictEqual(blog.toJSON().likes, 0)
+  })
 })
 
 
