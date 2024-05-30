@@ -54,15 +54,15 @@ describe('blog tests', () => {
 
   test('a valid blog can be added', async () => {
   
-    const blogToBeAdded = {
-      title: "newly added blog",
+    const newBlog = {
+      title: "new blog",
       author: "MCHU",
       url: "http://localhost:3003",
       likes: 18,
     }
     await api
       .post('/api/blogs')
-      .send(blogToBeAdded)
+      .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
 
@@ -70,26 +70,51 @@ describe('blog tests', () => {
     assert.strictEqual(blogs.length, listWithManyBlogs.length + 1)
 
     const titles = blogs.map(n => n.title)
-    assert(titles.includes('newly added blog'))
+    assert(titles.includes('new blog'))
   })
 
   test('if the "likes" property is missing, set it to 0', async () => {
   
-    const blogToBeAdded = {
-      title: "newly added blog",
+    const newBlog = {
+      title: "new blog",
       author: "MCHU",
       url: "http://localhost:3003",
       likes: undefined,
     }
     await api
       .post('/api/blogs')
-      .send(blogToBeAdded)
+      .send(newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
 
-    const blog = await Blog.findOne({ title: "newly added blog" })
+    const blog = await Blog.findOne({ title: "new blog" })
     // console.log(blog.toJSON())
     assert.strictEqual(blog.toJSON().likes, 0)
+  })
+
+  test('blogs without title of url cannot be added', async () => {
+    const newBlogWothoutTitle = {
+      author: "MCHU",
+      url: "http://localhost:3003",
+      likes: 18,
+    }  
+    await api
+      .post('/api/blogs')
+      .send(newBlogWothoutTitle)
+      .expect(400)
+
+    const newBlogWothoutUrl = {
+      title: "new blog",
+      author: "MCHU",
+      likes: 18,
+    }
+    await api
+      .post('/api/blogs')
+      .send(newBlogWothoutUrl)
+      .expect(400)
+
+    const allBlogs = await blogsInDb()
+    assert.strictEqual(allBlogs.length, listWithManyBlogs.length)
   })
 })
 
