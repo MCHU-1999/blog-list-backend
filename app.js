@@ -6,6 +6,7 @@ const config = require('./utils/config')
 const logger = require('./utils/logger')
 const middleware = require('./utils/middleware')
 const blogRouter = require('./controllers/blogs')
+const usersRouter = require('./controllers/users')
 
 // establish a connection to database
 mongoose.connect(config.MONGODB_URI)
@@ -25,6 +26,7 @@ app.use(middleware.requestLogger)
 
 // routers
 app.use('/api/blogs', blogRouter)
+app.use('/api/users', usersRouter)
 
 // unknown routes and error handling
 app.use(middleware.unknownEndpoint)
