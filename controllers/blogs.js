@@ -2,6 +2,7 @@ const router = require('express').Router()
 const Blog = require('../models/blog')
 const User = require('../models/user')
 const _ = require('lodash')
+const { userExtractor } = require('../utils/middleware')
 
 
 router.get('/', async (request, response) => {
@@ -19,7 +20,7 @@ router.get('/:id', async (request, response) => {
   }
 })
 
-router.post('/', async (request, response) => {
+router.post('/', userExtractor, async (request, response) => {
   const user = request.user
 
   const blog = new Blog({
@@ -33,10 +34,9 @@ router.post('/', async (request, response) => {
   response.status(201).json(result)
 })
 
-router.delete('/:id', async (request, response) => {
+router.delete('/:id', userExtractor, async (request, response) => {
   const user = request.user
   const blog = await Blog.findById(request.params.id)
-  // console.log(blog)
   if (!blog) {
     throw new Error("the blog does not exist")
   }
@@ -52,10 +52,21 @@ router.delete('/:id', async (request, response) => {
   }
 })
 
-router.put('/:id', async (request, response) => {
+router.put('/:id', userExtractor, async (request, response) => {
+  const user = request.user
   const newBlog = request.body
-  const result = await Blog.findByIdAndUpdate(request.params.id, newBlog, { new: true, runValidators: true })
-  response.status(200).json(result)
+
+  const blog = await Blog.findById(request.params.id)
+  if (!blog) {
+    throw new Error("the blog does not exist")
+  }
+
+  if (blog.user.toString() === user._id.toString()) {
+    const result = await Blog.findByIdAndUpdate(request.params.id, newBlog, { new: true, runValidators: true })
+    response.status(200).json(result)
+  } else {
+    throw { name : "UnauthorizedError", message : "only the creator can delete the blog" }
+  }
 })
 
 module.exports = router

@@ -34,8 +34,8 @@ describe('user api tests', () => {
   })
 
   after(async () => {
-    console.log('after() done');
     await mongoose.connection.close()
+    console.log('after() done');
   })
 
   test('create a user (valid)', async () => {
