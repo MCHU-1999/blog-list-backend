@@ -30,8 +30,9 @@ router.post('/', userExtractor, async (request, response) => {
     user: user._id
   })
 
-  const result = await blog.save()
-  user.blogs = user.blogs.concat(result._id)
+  const newBlog = await blog.save()
+  user.blogs = user.blogs.concat(newBlog._id)
+  const result = await newBlog.populate('user')
   await user.save()
   response.status(201).json(result)
 })
@@ -54,7 +55,7 @@ router.delete('/:id', userExtractor, async (request, response) => {
   }
 })
 
-router.put('/:id', async (request, response) => {
+router.put('/:id', userExtractor, async (request, response) => {
   // const user = request.user
   const newBlog = request.body
 
@@ -62,14 +63,20 @@ router.put('/:id', async (request, response) => {
   if (!blog) {
     throw new Error("the blog does not exist")
   }
-  const result = await Blog.findByIdAndUpdate(request.params.id, newBlog, { new: true, runValidators: true })
+  const result = await Blog.findByIdAndUpdate(request.params.id, newBlog, { new: true, runValidators: true }).populate('user')
   response.status(200).json(result)
-  // if (blog.user.toString() === user._id.toString()) {
-  //   const result = await Blog.findByIdAndUpdate(request.params.id, newBlog, { new: true, runValidators: true })
-  //   response.status(200).json(result)
-  // } else {
-  //   throw { name : "UnauthorizedError", message : "only the creator can update the blog" }
-  // }
+})
+
+router.post('/:id/comments', userExtractor, async (request, response) => {
+  const comment = request.body.comment
+
+  const blog = await Blog.findById(request.params.id)
+  if (!blog) {
+    throw new Error("the blog does not exist")
+  }
+  blog.comments.push(comment)
+  const result = await (await blog.save()).populate('user')
+  response.status(200).json(result)
 })
 
 module.exports = router
